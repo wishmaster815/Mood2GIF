@@ -1,20 +1,14 @@
 import React from "react";
-import { fetchImage } from "./api/mediaApi";
+import { fetchGIF, fetchImage, fetchVideo } from "./api/mediaApi";
+import SearchBar from "./components/SearchBar.jsx";
+import Tabs from "./components/Tabs.jsx";
 
 const App = () => {
   return (
-    <>
-      <div className="bg-gray-900 w-full min-h-screen text-white ">
-        <button
-          onClick={async () => {
-            const data = await fetchImage("cat");
-            console.log(data);
-          }}
-        >
-          click me
-        </button>
-      </div>
-    </>
+    <div className="bg-gray-900 w-full min-h-screen text-white p-4">
+      <SearchBar />
+      <Tabs />
+    </div>
   );
 };
 

@@ -9,7 +9,7 @@ const SearchBar = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(setQuery(query));
-    setQueryValue("");
+    // setQueryValue("");
   };
 
   return (
@@ -26,6 +26,7 @@ const SearchBar = () => {
           Search
         </button>
       </form>
+      
     </div>
   );
 };

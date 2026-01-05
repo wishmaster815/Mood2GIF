@@ -22,16 +22,54 @@ const ResultGrid = () => {
         dispatch(setLoading());
         let data = [];
         let response;
+        if (activeTab === "all") {
+          const [photos, gifs, videos] = await Promise.all([
+            fetchImage(query),
+            fetchGIF(query),
+            fetchVideo(query),
+          ]);
+
+          const photoData = Array.isArray(photos)
+            ? photos.map((item) => ({
+                id: `photo-${item.id}`,
+                type: "photo",
+                title: item.alt_description,
+                src: item.urls.small,
+                link: item.links.html,
+              }))
+            : [];
+
+          const gifData = Array.isArray(gifs)
+            ? gifs.map((item) => ({
+                id: `gif-${item.id}`,
+                type: "gif",
+                title: "GIF",
+                src: item.media_formats.gif.url,
+              }))
+            : [];
+
+          const videoData = Array.isArray(videos)
+            ? videos.map((item) => ({
+                id: `video-${item.id}`,
+                type: "video",
+                title: item.user.name,
+                src: item.video_files[0].link,
+              }))
+            : [];
+
+          data = [...photoData, ...gifData, ...videoData];
+        }
 
         if (activeTab === "photos") {
           response = await fetchImage(query);
           if (!Array.isArray(response)) return;
           data = response.map((item) => ({
             id: item.id,
+            title: item.alt_description,
             type: "photo",
-            src: item.urls.full,
+            src: item.urls.regular,
+            link: item.links.html,
           }));
-          console.log(data);
         }
 
         if (activeTab === "gifs") {
@@ -40,9 +78,9 @@ const ResultGrid = () => {
           data = response.map((item) => ({
             id: item.id,
             type: "gif",
+            title: "GIF",
             src: item.media_formats.gif.url,
           }));
-          console.log(data);
         }
 
         if (activeTab === "videos") {
@@ -53,7 +91,10 @@ const ResultGrid = () => {
             id: item.id,
             type: "video",
             src: item.video_files[0].link,
+            title: item.user.name,
+            link:item.url
           }));
+          console.log(data);
         }
 
         dispatch(setResults(data));
@@ -69,7 +110,7 @@ const ResultGrid = () => {
   if (error) return <h1>Error</h1>;
 
   return (
-    <div className="flex justify-between w-full flex-wrap gap-6 overflow-auto px-10">
+    <div className="flex justify-between w-full flex-wrap gap-3 overflow-auto ">
       {results.map((item) => (
         <div key={item.id}>
           <ResultCard item={item} />
